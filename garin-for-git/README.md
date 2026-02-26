@@ -56,7 +56,7 @@ npm run build
 - 🗄️ Supabase
 - 🚀 Vite
 - 🛣️ React Router
-
+...
 ## 📁 מבנה
 
 ```
