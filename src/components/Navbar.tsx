@@ -1,38 +1,53 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import Search from './Search'
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <nav className="bg-green-700 text-white sticky top-0 z-50 shadow-lg">
+    <nav className="bg-green-700 text-white shadow-lg sticky top-0 z-50" role="navigation" aria-label="תפריט ראשי">
+      {/* Skip to main content - accessibility */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-green-700 focus:rounded">
+        דלג לתוכן הראשי
+      </a>
+
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="text-2xl font-bold flex items-center gap-2">
-            <img src="/logo.png" alt="לוגו גרעין תורני" className="h-12 w-12 object-contain" onError={(e) => { e.currentTarget.style.display = 'none' }} />
-            <span>גרעין תורני אור יהודה</span>
+        <div className="flex justify-between items-center h-20">
+          
+          {/* Logo and Title */}
+          <Link 
+            to="/" 
+            className="flex items-center gap-3 hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-lg px-2 py-1" 
+            aria-label="דף הבית - גרעין תורני אור יהודה"
+          >
+            <img 
+              src="/logo.jpg" 
+              alt="לוגו גרעין תורני אור יהודה" 
+              className="h-14 w-auto"
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
+            />
+            <span className="text-xl md:text-2xl font-bold">גרעין תורני אור יהודה</span>
           </Link>
 
-          <div className="hidden md:flex gap-8">
-            <Link to="/" className="hover:text-blue-600 transition">דף הבית</Link>
-            <Link to="/about" className="hover:text-blue-600 transition">אודות</Link>
-            <Link to="/parasha" className="hover:text-blue-600 transition">פרשת השבוע</Link>
-            <Link to="/news" className="hover:text-blue-600 transition">עדכונים</Link>
-            <Link to="/education" className="hover:text-blue-600 transition">מוסדות חינוך</Link>
-            <Link to="/mechina" className="hover:text-blue-600 transition">מכינת לביא</Link>
-            <Link to="/sherut-leumi" className="hover:text-blue-600 transition">שירות לאומי</Link>
-            <Link to="/events" className="hover:text-blue-600 transition">אירועים</Link>
-            <Link to="/gallery" className="hover:text-blue-600 transition">גלריה</Link>
-            <Link to="/contact" className="hover:text-blue-600 transition">צור קשר</Link>
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center gap-6" role="menubar">
+            <Link to="/" className="hover:text-blue-200 transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-300 rounded px-2 py-1" role="menuitem">בית</Link>
+            <Link to="/about" className="hover:text-blue-200 transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-300 rounded px-2 py-1" role="menuitem">אודות</Link>
+            <Link to="/parasha" className="hover:text-blue-200 transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-300 rounded px-2 py-1" role="menuitem">פרשת השבוע</Link>
+            <Link to="/education" className="hover:text-blue-200 transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-300 rounded px-2 py-1" role="menuitem">חינוך</Link>
+            <Link to="/events" className="hover:text-blue-200 transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-300 rounded px-2 py-1" role="menuitem">אירועים</Link>
+            <Link to="/gallery" className="hover:text-blue-200 transition font-semibold focus:outline-none focus:ring-2 focus:ring-blue-300 rounded px-2 py-1" role="menuitem">גלריה</Link>
           </div>
 
-          <div className="hidden md:block mr-4">
-            <Search />
-          </div>
-
-          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setIsOpen(!isOpen)} 
+            className="lg:hidden p-2 rounded-lg hover:bg-green-800 transition focus:outline-none focus:ring-2 focus:ring-blue-300"
+            aria-label={isOpen ? 'סגור תפריט' : 'פתח תפריט'}
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               {isOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -42,18 +57,18 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden pb-4 flex flex-col gap-4">
-            <Link to="/" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">דף הבית</Link>
-            <Link to="/about" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">אודות</Link>
-            <Link to="/parasha" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">פרשת השבוע</Link>
-            <Link to="/news" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">עדכונים</Link>
-            <Link to="/education" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">מוסדות חינוך</Link>
-            <Link to="/mechina" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">מכינת לביא</Link>
-            <Link to="/sherut-leumi" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">שירות לאומי</Link>
-            <Link to="/events" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">אירועים</Link>
-            <Link to="/gallery" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">גלריה</Link>
-            <Link to="/contact" onClick={() => setIsOpen(false)} className="hover:text-blue-600 transition">צור קשר</Link>
+          <div id="mobile-menu" className="lg:hidden pb-4 space-y-2" role="menu">
+            <Link to="/" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>בית</Link>
+            <Link to="/about" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>אודות</Link>
+            <Link to="/parasha" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>פרשת השבוע</Link>
+            <Link to="/news" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>עדכונים</Link>
+            <Link to="/education" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>חינוך</Link>
+            <Link to="/mechina" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>מכינת לביא</Link>
+            <Link to="/sherut-leumi" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>שירות לאומי</Link>
+            <Link to="/events" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>אירועים</Link>
+            <Link to="/gallery" className="block py-2 hover:bg-green-800 rounded px-2 transition focus:outline-none focus:ring-2 focus:ring-blue-300" role="menuitem" onClick={() => setIsOpen(false)}>גלריה</Link>
           </div>
         )}
       </div>

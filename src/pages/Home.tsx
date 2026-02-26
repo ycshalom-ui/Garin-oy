@@ -32,127 +32,206 @@ export default function Home() {
   }
 
   return (
-    <div>
-      <section className="relative bg-gradient-to-br from-blue-50 to-green-50 py-20">
+    <div className="min-h-screen">
+      {/* Hero Section - Cleaner, Smaller */}
+      <section className="bg-gradient-to-br from-green-50 to-blue-50 py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl font-black text-blue-professional mb-6">
-            גרעין תורני<br />
-            <span className="text-green-community">אור יהודה</span>
+          <h1 className="text-3xl md:text-5xl font-bold text-green-700 mb-4">
+            גרעין תורני אור יהודה
           </h1>
-          <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto">
-            🕍 שליחות! לא רק בהתיישבות - גם בלב העיר
+          <p className="text-lg md:text-xl text-gray-700 mb-6 max-w-2xl mx-auto">
+            שליחות! לא רק בהתיישבות - גם בלב העיר
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link to="/events" className="bg-green-700 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-green-800 transition shadow-lg">
+            <Link 
+              to="/events" 
+              className="bg-green-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-800 transition focus:outline-none focus:ring-2 focus:ring-green-500"
+              aria-label="צפה באירועים הקרובים"
+            >
               📅 האירועים הקרובים
             </Link>
-            <a href="https://www.jgive.com/new/he/ils/charity-organizations/3080" target="_blank" rel="noopener noreferrer"
-              className="bg-blue-700 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-blue-800 transition shadow-lg">
-              💚 תרמו לגרעין
+            <a 
+              href="https://www.jgive.com/new/he/ils/charity-organizations/3080" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="תרום לגרעין"
+            >
+              💝 תרמו לגרעין
             </a>
           </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 -mt-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[{ num: '17+', label: 'שנות פעילות' }, { num: '100+', label: 'משפחות בקהילה' }, { num: '30+', label: 'משפחות גרעין' }, { num: '13', label: 'פעילויות' }].map((stat, i) => (
-            <div key={i} className="bg-white rounded-2xl shadow-xl p-6 text-center">
-              <div className="text-gray-600 font-semibold mb-2">{stat.label}</div>
-              <div className="text-4xl font-black text-green-700">{stat.num}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-blue-professional text-center mb-12">השליחות שלנו</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-              <div className="text-5xl mb-4">🤝</div>
-              <h3 className="text-2xl font-bold text-blue-professional mb-4">קהילה חמה ומגובשת</h3>
-              <p className="text-gray-600 leading-relaxed">משפחות צעירות עם ערכים משותפים, תמיכה הדדית ואווירה משפחתית</p>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-              <div className="text-5xl mb-4">📚</div>
-              <h3 className="text-2xl font-bold text-blue-professional mb-4">חינוך איכותי וערכי</h3>
-              <p className="text-gray-600 leading-relaxed">7 גני ילדים, בית ספר, תלמוד תורה ומכינת לביא</p>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-              <div className="text-5xl mb-4">✡️</div>
-              <h3 className="text-2xl font-bold text-blue-professional mb-4">תורה חיה ומעשית</h3>
-              <p className="text-gray-600 leading-relaxed">שיעורי תורה, שיח תורני, ופעילות יומיומית</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Shabbat Times Widget */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="max-w-4xl mx-auto px-4">
-          <ShabbatWidget />
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-blue-professional text-center mb-4">סרטון הגרעין</h2>
-          <p className="text-xl text-center text-gray-600 mb-12">הכירו את הגרעין שלנו</p>
+      {/* Main Content with Sidebar */}
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid lg:grid-cols-[1fr,300px] gap-8">
           
-          <div className="max-w-4xl mx-auto">
-            <div className="relative" style={{ paddingBottom: '56.25%', height: 0 }}>
-              <iframe
-                src="https://www.youtube.com/embed/6IuXlkywqzM"
-                title="גרעין תורני אור יהודה"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute top-0 left-0 w-full h-full rounded-2xl shadow-2xl"
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      </section>
+          {/* Main Content */}
+          <div className="space-y-12">
+            
+            {/* Mission */}
+            <section>
+              <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-4">המשימה שלנו</h2>
+              <div className="bg-white rounded-lg shadow-md p-6 space-y-4 text-gray-700 leading-relaxed">
+                <p>
+                  גרעין תורני אור יהודה הוא קהילה חמה המבוססת על ערכי תורה וציונות דתית.
+                  אנו פועלים לחיזוק הקשר בין תורה, עם ישראל וארץ ישראל בלב השרון.
+                </p>
+                <p>
+                  הגרעין מפעיל מוסדות חינוך, מכינה קדם-צבאית, שירות לאומי ופעילויות קהילתיות מגוונות.
+                </p>
+              </div>
+            </section>
 
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-blue-professional text-center mb-12">אירועים קרובים</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {events.map(event => (
-              <div key={event.id} className="bg-blue-professional text-white rounded-2xl overflow-hidden shadow-lg">
-                <div className="bg-white/20 p-6 text-center">
-                  <div className="text-4xl font-black">{new Date(event.date).getDate()}</div>
-                  <div className="text-sm opacity-90">{new Date(event.date).toLocaleDateString('he-IL', { month: 'long' })}</div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{event.title}</h3>
-                  <p className="text-sm opacity-90 mb-2">{event.time} | {event.location}</p>
-                  <p className="opacity-80">{event.description}</p>
+            {/* Video */}
+            <section>
+              <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-4">הכירו אותנו</h2>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="aspect-video">
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    src="https://www.youtube.com/embed/79Aiv0NeWFA" 
+                    title="סרטון גרעין תורני אור יהודה" 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                    className="w-full h-full"
+                  ></iframe>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </section>
 
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-blue-professional text-center mb-12">מהבלוג שלנו</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {posts.map(post => (
-              <Link key={post.id} to={`/parasha/${post.id}`} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition">
-                <div className="h-48 bg-gradient-to-br from-blue-100 to-green-100 flex items-center justify-center text-6xl">📝</div>
-                <div className="p-6">
-                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-professional rounded-full text-sm font-bold mb-3">{post.category}</span>
-                  <h3 className="text-xl font-bold text-blue-professional mb-3">{post.title}</h3>
-                  <p className="text-gray-600 mb-4">{post.excerpt || post.content?.substring(0, 100) + '...'}</p>
-                  <div className="text-sm text-gray-500">{post.author} • {new Date(post.created_at).toLocaleDateString('he-IL')}</div>
+            {/* Recent Posts */}
+            {posts.length > 0 && (
+              <section>
+                <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-6">פרשת השבוע</h2>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {posts.map(post => (
+                    <Link
+                      key={post.id}
+                      to={`/parasha/${post.id}`}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                      {post.image_url && (
+                        <div className="h-40 overflow-hidden">
+                          <img src={post.image_url} alt={post.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="p-4">
+                        <span className="inline-block px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-semibold mb-2">
+                          {post.category}
+                        </span>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2">{post.title}</h3>
+                        <p className="text-gray-600 text-sm line-clamp-2">{post.excerpt}</p>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-              </Link>
-            ))}
+                <div className="text-center mt-6">
+                  <Link 
+                    to="/parasha" 
+                    className="inline-block text-green-700 font-semibold hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 rounded px-2"
+                  >
+                    צפה בכל הפרשות ←
+                  </Link>
+                </div>
+              </section>
+            )}
+
+            {/* Stats */}
+            <section className="bg-gradient-to-br from-green-700 to-blue-700 rounded-lg shadow-xl p-8 text-white">
+              <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">הגרעין במספרים</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">50+</div>
+                  <div className="text-white/90">משפחות</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">300+</div>
+                  <div className="text-white/90">תלמידים</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">4</div>
+                  <div className="text-white/90">מוסדות חינוך</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">20+</div>
+                  <div className="text-white/90">שנות פעילות</div>
+                </div>
+              </div>
+            </section>
+
+            {/* Upcoming Events */}
+            {events.length > 0 && (
+              <section>
+                <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-6">אירועים קרובים</h2>
+                <div className="space-y-4">
+                  {events.map(event => (
+                    <div key={event.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+                      <div className="flex items-start gap-4">
+                        <div className="bg-green-100 rounded-lg p-3 text-center min-w-[60px]">
+                          <div className="text-2xl font-bold text-green-700">
+                            {new Date(event.date).getDate()}
+                          </div>
+                          <div className="text-xs text-green-600">
+                            {new Date(event.date).toLocaleDateString('he-IL', { month: 'short' })}
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg text-gray-900 mb-1">{event.title}</h3>
+                          <p className="text-gray-600 text-sm mb-2">{event.description}</p>
+                          {event.location && (
+                            <p className="text-gray-500 text-sm">📍 {event.location}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-center mt-6">
+                  <Link 
+                    to="/events" 
+                    className="inline-block text-green-700 font-semibold hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 rounded px-2"
+                  >
+                    כל האירועים ←
+                  </Link>
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* Sidebar - Shabbat Widget (Desktop only) */}
+          <aside className="hidden lg:block" aria-label="מידע נוסף">
+            <div className="sticky top-24 space-y-6">
+              <ShabbatWidget />
+              
+              {/* Quick Contact */}
+              <div className="bg-white rounded-lg shadow-md p-4 border-2 border-green-700">
+                <h3 className="font-bold text-lg text-green-700 mb-3">צור קשר מהיר</h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p className="flex items-center gap-2">
+                    <span>📞</span>
+                    <a href="tel:036124477" className="hover:text-green-700 transition">03-612-4477</a>
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <span>📧</span>
+                    <a href="mailto:garorye1@gmail.com" className="hover:text-green-700 transition break-all">
+                      garorye1@gmail.com
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Mobile Shabbat Widget */}
+          <div className="lg:hidden">
+            <ShabbatWidget />
           </div>
         </div>
-      </section>
+      </div>
     </div>
   )
 }
