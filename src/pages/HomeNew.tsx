@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Post, Event } from '../types'
 import ShabbatWidget from '../components/ShabbatWidget'
-import YouTubeEmbed from '../components/YouTubeEmbed'
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([])
@@ -88,10 +87,20 @@ export default function Home() {
             {/* Video */}
             <section>
               <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-4">הכירו אותנו</h2>
-              <YouTubeEmbed 
-                videoId="79Aiv0NeWFA"
-                title="הכירו את גרעין תורני אור יהודה"
-              />
+              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="aspect-video">
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    src="https://www.youtube.com/embed/79Aiv0NeWFA" 
+                    title="סרטון גרעין תורני אור יהודה" 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+              </div>
             </section>
 
             {/* Recent Posts */}
