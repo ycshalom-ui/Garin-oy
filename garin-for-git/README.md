@@ -6,7 +6,7 @@
 npm install
 ```
 
-## ⚙️ הגדרת Supabase
+## ⚙️ הגדרת      .Supabase
 
 1. צור פרויקט ב-https://supabase.com
 2. הרץ את `SUPABASE-SCHEMA.sql` ב-SQL Editor
