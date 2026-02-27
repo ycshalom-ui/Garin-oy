@@ -1,0 +1,432 @@
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
+
+export default function Admin() {
+  const [user, setUser] = useState<any>(null)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isSignUp, setIsSignUp] = useState(false)
+  const [activeTab, setActiveTab] = useState<'posts' | 'events' | 'gallery'>('posts')
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string>('')
+
+  // Post form with image
+  const [postForm, setPostForm] = useState({
+    title: '',
+    content: '',
+    excerpt: '',
+    category: 'עדכון',
+    author: 'צוות הגרעין',
+    image_url: '',
+    tags: ''
+  })
+
+  // Event form
+  const [eventForm, setEventForm] = useState({
+    title: '',
+    description: '',
+    date: '',
+    time: '',
+    location: ''
+  })
+
+  useEffect(() => {
+    checkUser()
+  }, [])
+
+  async function checkUser() {
+    const { data } = await supabase.auth.getSession()
+    setUser(data.session?.user ?? null)
+  }
+
+  async function handleAuth(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({ email, password })
+      if (error) {
+        setMessage('שגיאה ברישום: ' + error.message)
+      } else {
+        setMessage('✅ נרשמת בהצלחה! בדוק את המייל לאימות.')
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setMessage('שגיאה בהתחברות: ' + error.message)
+      } else {
+        setMessage('✅ התחברת בהצלחה!')
+        checkUser()
+      }
+    }
+    setLoading(false)
+  }
+
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    setUser(null)
+  }
+
+  function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  async function uploadImage(): Promise<string> {
+    if (!imageFile) return ''
+    
+    const fileExt = imageFile.name.split('.').pop()
+    const fileName = `${Math.random()}.${fileExt}`
+    const filePath = `post-images/${fileName}`
+
+    const { error } = await supabase.storage
+      .from('images')
+      .upload(filePath, imageFile)
+
+    if (error) {
+      console.error('Error uploading image:', error)
+      return ''
+    }
+
+    const { data } = supabase.storage
+      .from('images')
+      .getPublicUrl(filePath)
+
+    return data.publicUrl
+  }
+
+  async function handlePostSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+
+    let imageUrl = postForm.image_url
+    if (imageFile) {
+      imageUrl = await uploadImage()
+    }
+
+    const tags = postForm.tags.split(',').map(t => t.trim()).filter(Boolean)
+
+    const { error } = await supabase.from('posts').insert([{
+      ...postForm,
+      image_url: imageUrl,
+      tags,
+      published: true
+    }])
+
+    if (error) {
+      setMessage('שגיאה ביצירת פוסט: ' + error.message)
+    } else {
+      setMessage('✅ הפוסט נוצר בהצלחה!')
+      setPostForm({ title: '', content: '', excerpt: '', category: 'עדכון', author: 'צוות הגרעין', image_url: '', tags: '' })
+      setImageFile(null)
+      setImagePreview('')
+    }
+    setLoading(false)
+  }
+
+  async function handleEventSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+
+    const { error } = await supabase.from('events').insert([eventForm])
+
+    if (error) {
+      setMessage('שגיאה ביצירת אירוע: ' + error.message)
+    } else {
+      setMessage('✅ האירוע נוצר בהצלחה!')
+      setEventForm({ title: '', description: '', date: '', time: '', location: '' })
+    }
+    setLoading(false)
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
+          <h1 className="text-3xl font-bold text-blue-professional text-center mb-6">
+            🔐 {isSignUp ? 'הרשמה' : 'כניסת מנהלים'}
+          </h1>
+          
+          <form onSubmit={handleAuth} className="space-y-4">
+            <input
+              type="email"
+              placeholder="דוא״ל"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+            />
+            <input
+              type="password"
+              placeholder="סיסמה"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-professional text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-800 transition disabled:opacity-50"
+            >
+              {loading ? (isSignUp ? 'נרשם...' : 'מתחבר...') : (isSignUp ? 'הירשם' : 'התחבר')}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="w-full text-blue-professional hover:underline"
+            >
+              {isSignUp ? 'כבר יש לי חשבון - התחבר' : 'אין לי חשבון - הירשם'}
+            </button>
+
+            {message && (
+              <p className={`text-center font-bold ${message.includes('שגיאה') ? 'text-red-600' : 'text-green-600'}`}>
+                {message}
+              </p>
+            )}
+          </form>
+
+          <div className="mt-8 p-4 bg-blue-50 rounded-xl text-sm">
+            <p className="font-bold mb-2">💡 עזרה:</p>
+            <p>• אם זו הפעם הראשונה - לחץ "הירשם"</p>
+            <p>• הזן מייל וסיסמה חזקה</p>
+            <p>• תקבל מייל אימות</p>
+            <p>• חזור והתחבר!</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-20">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-blue-professional">🎛️ ניהול האתר</h1>
+            <p className="text-gray-600">שלום, {user.email}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 transition"
+          >
+            יציאה
+          </button>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg mb-8">
+          <div className="flex border-b">
+            <button
+              onClick={() => setActiveTab('posts')}
+              className={`flex-1 px-6 py-4 font-bold text-lg transition ${
+                activeTab === 'posts' ? 'bg-blue-professional text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              📝 ניהול פוסטים
+            </button>
+            <button
+              onClick={() => setActiveTab('events')}
+              className={`flex-1 px-6 py-4 font-bold text-lg transition ${
+                activeTab === 'events' ? 'bg-blue-professional text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              📅 ניהול אירועים
+            </button>
+            <button
+              onClick={() => setActiveTab('gallery')}
+              className={`flex-1 px-6 py-4 font-bold text-lg transition ${
+                activeTab === 'gallery' ? 'bg-blue-professional text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              🖼️ ניהול גלריה
+            </button>
+          </div>
+
+          <div className="p-8">
+            {activeTab === 'posts' && (
+              <form onSubmit={handlePostSubmit} className="space-y-6">
+                <h2 className="text-2xl font-bold text-blue-professional mb-4">הוסף פוסט חדש</h2>
+                
+                <input
+                  type="text"
+                  placeholder="כותרת הפוסט"
+                  value={postForm.title}
+                  onChange={(e) => setPostForm({...postForm, title: e.target.value})}
+                  required
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                />
+
+                <select
+                  value={postForm.category}
+                  onChange={(e) => setPostForm({...postForm, category: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                >
+                  <option value="פרשת שבוע">פרשת שבוע</option>
+                  <option value="תורה">תורה</option>
+                  <option value="הלכה">הלכה</option>
+                  <option value="עדכון">עדכון</option>
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="תגיות (מופרדות בפסיק, למשל: שבת, תפילה, חינוך)"
+                  value={postForm.tags}
+                  onChange={(e) => setPostForm({...postForm, tags: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                />
+
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6">
+                  <label className="block mb-2 font-bold text-gray-700">📸 תמונה לפוסט (מ-Canva או אחר)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="w-full"
+                  />
+                  {imagePreview && (
+                    <div className="mt-4">
+                      <img src={imagePreview} alt="תצוגה מקדימה" className="max-w-md rounded-xl shadow-lg" />
+                    </div>
+                  )}
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="תקציר (אופציונלי)"
+                  value={postForm.excerpt}
+                  onChange={(e) => setPostForm({...postForm, excerpt: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                />
+
+                <textarea
+                  placeholder="תוכן הפוסט"
+                  value={postForm.content}
+                  onChange={(e) => setPostForm({...postForm, content: e.target.value})}
+                  required
+                  rows={10}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none resize-none"
+                ></textarea>
+
+                <input
+                  type="text"
+                  placeholder="שם המחבר"
+                  value={postForm.author}
+                  onChange={(e) => setPostForm({...postForm, author: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                />
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition disabled:opacity-50"
+                >
+                  {loading ? 'שומר...' : '✅ פרסם פוסט'}
+                </button>
+
+                {message && (
+                  <p className={`text-center font-bold text-lg ${message.includes('שגיאה') ? 'text-red-600' : 'text-green-600'}`}>
+                    {message}
+                  </p>
+                )}
+              </form>
+            )}
+
+            {activeTab === 'events' && (
+              <form onSubmit={handleEventSubmit} className="space-y-6">
+                <h2 className="text-2xl font-bold text-blue-professional mb-4">הוסף אירוע חדש</h2>
+                
+                <input
+                  type="text"
+                  placeholder="שם האירוע"
+                  value={eventForm.title}
+                  onChange={(e) => setEventForm({...eventForm, title: e.target.value})}
+                  required
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                />
+
+                <textarea
+                  placeholder="תיאור האירוע"
+                  value={eventForm.description}
+                  onChange={(e) => setEventForm({...eventForm, description: e.target.value})}
+                  rows={4}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none resize-none"
+                ></textarea>
+
+                <input
+                  type="date"
+                  value={eventForm.date}
+                  onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
+                  required
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                />
+
+                <input
+                  type="time"
+                  value={eventForm.time}
+                  onChange={(e) => setEventForm({...eventForm, time: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                />
+
+                <input
+                  type="text"
+                  placeholder="מיקום האירוע"
+                  value={eventForm.location}
+                  onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-professional focus:outline-none"
+                />
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-green-700 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition disabled:opacity-50"
+                >
+                  {loading ? 'שומר...' : '✅ פרסם אירוע'}
+                </button>
+
+                {message && (
+                  <p className={`text-center font-bold text-lg ${message.includes('שגיאה') ? 'text-red-600' : 'text-green-600'}`}>
+                    {message}
+                  </p>
+                )}
+              </form>
+            )}
+
+            {activeTab === 'gallery' && (
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">🖼️</div>
+                <h3 className="text-2xl font-bold text-blue-professional mb-4">ניהול גלריה</h3>
+                <p className="text-gray-600 mb-4">
+                  להעלאת תמונות, השתמש ב-Supabase Storage.
+                </p>
+                <p className="text-gray-600 mb-8">
+                  המערכת תומכת בתמונות מ-Canva ומכל מקור אחר!
+                </p>
+                <a
+                  href="https://supabase.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-blue-professional text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-800 transition"
+                >
+                  פתח Supabase Storage
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
