@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "garin",
+  "compatibility_date": "2025-09-27",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "garin-for-git"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
